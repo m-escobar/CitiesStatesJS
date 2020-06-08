@@ -130,4 +130,65 @@ router.get('/nameByState/:size', (req, res) => {
   }
 });
 
+router.get('/nameSizeAllStates/:size', (req, res) => {
+  const orderSize = req.params.size.toLowerCase();
+  states = allStates;
+  cities = allCities;
+
+  let result = [];
+
+  try {
+    let cityName = null;
+    let nameSize = 0;
+    let stateId = null;
+      
+    if(orderSize === 'longer') {
+      cities.forEach(city => {
+        if(city.Nome.length > nameSize) {
+          nameSize = city.Nome.length;
+          cityName = city.Nome;
+          stateId = city.Estado;
+        } else if(city.Nome.length === nameSize) {
+          
+          let two_cities = [cityName, city.Nome]
+          let first_city = two_cities.sort();
+          
+          if (first_city === city.Nome) {
+            nameSize = city.Nome.length;
+            cityName = city.Nome;
+            stateId = city.Estado;
+          }
+        }
+      });
+    } else if(orderSize === 'shorter') {
+        nameSize = 1000;
+        cities.forEach(city => {
+          if(city.Nome.length < nameSize) {
+            nameSize = city.Nome.length;
+            cityName = city.Nome;
+            stateId = city.Estado;
+          } else if(city.Nome.length === nameSize) {
+          
+            let two_cities = [cityName, city.Nome]
+            let first_city = two_cities.sort();
+            
+            if (first_city === city.Nome) {
+              nameSize = city.Nome.length;
+              cityName = city.Nome;
+              stateId = city.Estado;
+            }
+          }
+        });
+      };
+
+      let state = states.filter(state => state.ID === stateId)[0];
+      result = [cityName, state.Sigla];
+       
+      res.send(result);
+  } catch (err) {
+      res.status(400).send({ error: err.message});
+      console.log(`ERROR: GET /nameSizeAllStates - ${err.message}`);
+  }
+});
+
 module.exports = router;
