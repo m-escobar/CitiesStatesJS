@@ -28,7 +28,7 @@ router.get('/statesFiveCities/:order', (req, res) => {
 
   let newList = [];
   let sorted_list = null;
-  let result = []
+  let result = [];
   let state = null;
 
   try {
@@ -59,6 +59,69 @@ router.get('/statesFiveCities/:order', (req, res) => {
       state = states.filter(thisState => thisState.ID === sorted_list[i].id.toString())[0]
       result.push(`${state.Sigla} - ${sorted_list[i].cities}`);
     }
+    
+    res.send(result);
+  } catch (err) {
+      res.status(400).send({ error: err.message});
+      console.log(`ERROR: GET /statesFiveCities - ${err.message}`);
+  }
+});
+
+router.get('/nameByState/:size', (req, res) => {
+  const orderSize = req.params.size.toLowerCase();
+  states = allStates;
+  cities = allCities;
+
+  let result = [];
+
+  try {
+    let citiesNameSizes = [];
+    let cityName = null;
+
+    states.forEach(state => {
+      nameSize = 0;
+      cityName = '';
+      let citiesList = cities.filter(city => city.Estado === state.ID);
+      
+      if(orderSize === 'longer') {
+        citiesList.forEach(city => {
+          if(city.Nome.length > nameSize) {
+            nameSize = city.Nome.length;
+            cityName = city.Nome;
+          } else if(city.Nome.length === nameSize) {
+            
+            let two_cities = [cityName, city.Nome]
+            let first_city = two_cities.sort();
+            
+            if (first_city === city.Nome) {
+              nameSize = city.Nome.length;
+              cityName = city.Nome;
+            }
+          }
+        });
+      } else if(orderSize === 'shorter') {
+          nameSize = 1000;
+          citiesList.forEach(city => {
+            if(city.Nome.length < nameSize) {
+              nameSize = city.Nome.length;
+              cityName = city.Nome;
+            } else if(city.Nome.length === nameSize) {
+            
+              let two_cities = [cityName, city.Nome]
+              let first_city = two_cities.sort();
+              
+              if (first_city === city.Nome) {
+                nameSize = city.Nome.length;
+                cityName = city.Nome;
+              }
+            }
+          });
+        };
+
+      citiesNameSizes.push([state.Sigla, cityName])
+    });
+
+    result = citiesNameSizes;
     
     res.send(result);
   } catch (err) {
