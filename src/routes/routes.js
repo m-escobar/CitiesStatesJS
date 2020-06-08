@@ -21,10 +21,15 @@ router.get('/citiesInThisState/:uf', (req, res) => {
 });
 
 
-router.get('/statesTopFive', (req, res) => {
-  // const params = req.params.uf.toUpperCase();
+router.get('/statesFiveCities/:order', (req, res) => {
+  const order = req.params.order.toLowerCase();
   states = allStates;
   cities = allCities;
+
+  let newList = [];
+  let sorted_list = null;
+  let result = []
+  let state = null;
 
   try {
     let citiesByState = cities.reduce((p, c) => {
@@ -37,15 +42,19 @@ router.get('/statesTopFive', (req, res) => {
       return p;
     }, {});
 
-    let newList = [];
     for(i in citiesByState) newList.push({id: Number(i), cities: citiesByState[i]});
     
-    let sorted_list = newList.sort((a, b) => {
-      return b.cities - a.cities;
-    });
-
-    let result = []
-    let state = null;
+    
+    if(order === 'top') {
+      sorted_list = newList.sort((a, b) => {
+        return b.cities - a.cities;
+      });
+    } else if(order === 'bottom') {
+      sorted_list = newList.sort((a, b) => {
+        return a.cities - b.cities;
+      });
+    }
+    
     for (i = 0; i < 5; i++) {
       state = states.filter(thisState => thisState.ID === sorted_list[i].id.toString())[0]
       result.push(`${state.Sigla} - ${sorted_list[i].cities}`);
@@ -54,44 +63,7 @@ router.get('/statesTopFive', (req, res) => {
     res.send(result);
   } catch (err) {
       res.status(400).send({ error: err.message});
-      console.log(`ERROR: GET /statesTopFive - ${err.message}`);
-  }
-});
-
-router.get('/statesBottomFive', (req, res) => {
-  // const params = req.params.uf.toUpperCase();
-  states = allStates;
-  cities = allCities;
-
-  try {
-    let citiesByState = cities.reduce((p, c) => {
-      let stateCount = c.Estado;
-      
-      if (!p.hasOwnProperty(stateCount)) {
-        p[stateCount] = 0;
-      }
-      p[stateCount]++;
-      return p;
-    }, {});
-
-    let newList = [];
-    for(i in citiesByState) newList.push({id: Number(i), cities: citiesByState[i]});
-    
-    let sorted_list = newList.sort((a, b) => {
-      return a.cities - b.cities;
-    });
-
-    let result = []
-    let state = null;
-    for (i = 0; i < 5; i++) {
-      state = states.filter(thisState => thisState.ID === sorted_list[i].id.toString())[0]
-      result.push(`${state.Sigla} - ${sorted_list[i].cities}`);
-    }
-    
-    res.send(result);
-  } catch (err) {
-      res.status(400).send({ error: err.message});
-      console.log(`ERROR: GET /statesBottomFive - ${err.message}`);
+      console.log(`ERROR: GET /statesFiveCities - ${err.message}`);
   }
 });
 
