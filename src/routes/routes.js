@@ -28,7 +28,7 @@ router.get('/statesFiveCities/:order', (req, res) => {
 
   let newList = [];
   let sorted_list = null;
-  let result = []
+  let result = [];
   let state = null;
 
   try {
@@ -59,6 +59,44 @@ router.get('/statesFiveCities/:order', (req, res) => {
       state = states.filter(thisState => thisState.ID === sorted_list[i].id.toString())[0]
       result.push(`${state.Sigla} - ${sorted_list[i].cities}`);
     }
+    
+    res.send(result);
+  } catch (err) {
+      res.status(400).send({ error: err.message});
+      console.log(`ERROR: GET /statesFiveCities - ${err.message}`);
+  }
+});
+
+router.get('/nameByState/:size', (req, res) => {
+  const orderSize = req.params.size.toLowerCase();
+  states = allStates;
+  cities = allCities;
+
+  let result = [];
+  // let newList = [];
+  // let sorted_list = null;
+  // let state = null;
+
+  try {
+    let citiesNameSizes = [];
+    let cityName = null;
+
+    states.forEach(state => {
+      nameSize = 0;
+      cityName = '';
+      let citiesList = cities.filter(city => city.Estado === state.ID);
+      
+      citiesList.forEach(city => {
+        if(city.Nome.length > nameSize) {
+          nameSize = city.Nome.length;
+          cityName = city.Nome;
+        }
+      });
+
+    citiesNameSizes.push([state.Sigla, cityName])
+    });
+
+    result = citiesNameSizes;
     
     res.send(result);
   } catch (err) {
