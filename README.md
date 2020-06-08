@@ -1,3 +1,3 @@
 # Cities and States
 
-Info about brazilian cities and states
+This is an exercise about Info about brazilian cities and states (data is from 2013)

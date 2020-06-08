@@ -58,4 +58,41 @@ router.get('/statesTopFive', (req, res) => {
   }
 });
 
+router.get('/statesBottomFive', (req, res) => {
+  // const params = req.params.uf.toUpperCase();
+  states = allStates;
+  cities = allCities;
+
+  try {
+    let citiesByState = cities.reduce((p, c) => {
+      let stateCount = c.Estado;
+      
+      if (!p.hasOwnProperty(stateCount)) {
+        p[stateCount] = 0;
+      }
+      p[stateCount]++;
+      return p;
+    }, {});
+
+    let newList = [];
+    for(i in citiesByState) newList.push({id: Number(i), cities: citiesByState[i]});
+    
+    let sorted_list = newList.sort((a, b) => {
+      return a.cities - b.cities;
+    });
+
+    let result = []
+    let state = null;
+    for (i = 0; i < 5; i++) {
+      state = states.filter(thisState => thisState.ID === sorted_list[i].id.toString())[0]
+      result.push(`${state.Sigla} - ${sorted_list[i].cities}`);
+    }
+    
+    res.send(result);
+  } catch (err) {
+      res.status(400).send({ error: err.message});
+      console.log(`ERROR: GET /statesBottomFive - ${err.message}`);
+  }
+});
+
 module.exports = router;
