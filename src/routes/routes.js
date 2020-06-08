@@ -90,10 +90,10 @@ router.get('/nameByState/:size', (req, res) => {
             cityName = city.Nome;
           } else if(city.Nome.length === nameSize) {
             
-            let two_cities = [cityName, city.Nome]
-            let first_city = two_cities.sort();
+            let twoCities = [cityName, city.Nome]
+            let firstCity = twoCities.sort()[0];
             
-            if (first_city === city.Nome) {
+            if (firstCity === city.Nome) {
               nameSize = city.Nome.length;
               cityName = city.Nome;
             }
@@ -107,10 +107,10 @@ router.get('/nameByState/:size', (req, res) => {
               cityName = city.Nome;
             } else if(city.Nome.length === nameSize) {
             
-              let two_cities = [cityName, city.Nome]
-              let first_city = two_cities.sort();
+              let twoCities = [cityName, city.Nome]
+              let firstCity = twoCities.sort()[0];
               
-              if (first_city === city.Nome) {
+              if (firstCity === city.Nome) {
                 nameSize = city.Nome.length;
                 cityName = city.Nome;
               }
@@ -150,10 +150,10 @@ router.get('/nameSizeAllStates/:size', (req, res) => {
           stateId = city.Estado;
         } else if(city.Nome.length === nameSize) {
           
-          let two_cities = [cityName, city.Nome]
-          let first_city = two_cities.sort();
+          let twoCities = [cityName, city.Nome]
+          let firstCity = twoCities.sort()[0];
           
-          if (first_city === city.Nome) {
+          if (firstCity === city.Nome) {
             nameSize = city.Nome.length;
             cityName = city.Nome;
             stateId = city.Estado;
@@ -168,11 +168,11 @@ router.get('/nameSizeAllStates/:size', (req, res) => {
             cityName = city.Nome;
             stateId = city.Estado;
           } else if(city.Nome.length === nameSize) {
-          
-            let two_cities = [cityName, city.Nome]
-            let first_city = two_cities.sort();
+            console.log(`${city.Nome} >>> ${cityName}`);
+            let twoCities = [cityName, city.Nome]
+            let firstCity = twoCities.sort()[0];
             
-            if (first_city === city.Nome) {
+            if (firstCity === city.Nome) {
               nameSize = city.Nome.length;
               cityName = city.Nome;
               stateId = city.Estado;
