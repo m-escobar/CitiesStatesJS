@@ -73,9 +73,6 @@ router.get('/nameByState/:size', (req, res) => {
   cities = allCities;
 
   let result = [];
-  // let newList = [];
-  // let sorted_list = null;
-  // let state = null;
 
   try {
     let citiesNameSizes = [];
@@ -86,14 +83,42 @@ router.get('/nameByState/:size', (req, res) => {
       cityName = '';
       let citiesList = cities.filter(city => city.Estado === state.ID);
       
-      citiesList.forEach(city => {
-        if(city.Nome.length > nameSize) {
-          nameSize = city.Nome.length;
-          cityName = city.Nome;
-        }
-      });
+      if(orderSize === 'longer') {
+        citiesList.forEach(city => {
+          if(city.Nome.length > nameSize) {
+            nameSize = city.Nome.length;
+            cityName = city.Nome;
+          } else if(city.Nome.length === nameSize) {
+            
+            let two_cities = [cityName, city.Nome]
+            let first_city = two_cities.sort();
+            
+            if (first_city === city.Nome) {
+              nameSize = city.Nome.length;
+              cityName = city.Nome;
+            }
+          }
+        });
+      } else if(orderSize === 'shorter') {
+          nameSize = 1000;
+          citiesList.forEach(city => {
+            if(city.Nome.length < nameSize) {
+              nameSize = city.Nome.length;
+              cityName = city.Nome;
+            } else if(city.Nome.length === nameSize) {
+            
+              let two_cities = [cityName, city.Nome]
+              let first_city = two_cities.sort();
+              
+              if (first_city === city.Nome) {
+                nameSize = city.Nome.length;
+                cityName = city.Nome;
+              }
+            }
+          });
+        };
 
-    citiesNameSizes.push([state.Sigla, cityName])
+      citiesNameSizes.push([state.Sigla, cityName])
     });
 
     result = citiesNameSizes;
